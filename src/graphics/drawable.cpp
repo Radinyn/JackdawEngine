@@ -1,7 +1,5 @@
 #include "../../include/JackdawGraphics.h"
 #include "../graphics/glclasses.h"
-#include "shaderList.h"
-#include "shader.h"
 
 namespace jdw
 {

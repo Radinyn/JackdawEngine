@@ -2,19 +2,23 @@
 
 std::vector<std::string> _shaders = {
 
-R"glsl(
-#version 400 core
+R"glsl(#version 400 core
 layout(location = 0) in vec3 position;
+layout(location = 1) in vec2 texCoord;
+out vec2 vTexCoord;
+uniform mat4 uMV;
 uniform mat4 uProj;
 void main() {
-gl_Position = uProj * vec4(position, 1);
+vTexCoord = texCoord;
+gl_Position = uProj * uMV * vec4(position, 1);
 }
 $
 #version 400 core
-out vec4 fragColor;
+out vec4 fragColor;in vec2 vTexCoord;
+uniform sampler2D uTexture;
 uniform vec4 uColor;
 void main() {
-fragColor = uColor;
+fragColor = vec4(uColor.rgb, uColor.a * texture(uTexture, vTexCoord).r);
 }
 )glsl",
 

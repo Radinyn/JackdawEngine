@@ -123,7 +123,7 @@ struct _Matrix4x4Type
     {
         for (size_t i = 0; i < 4; i++)
             for (size_t j = 0; j < 4; j++)
-                this->Mat[i][j] = other.get(i, j);
+                this->Mat[i][j] = other[i][j];
     }
 
     std::string to_string() const
@@ -152,7 +152,12 @@ struct _Matrix4x4Type
         return this->Mat[index];
     }
 
-    _Matrix4x4Type& operator*= (_Matrix4x4Type other)
+	const Numeric* operator[] (size_t index) const
+    {
+        return this->Mat[index];
+    }
+
+    _Matrix4x4Type& operator*= (const _Matrix4x4Type& other)
     {
         _Matrix4x4Type copy = *this;
         for (size_t i = 0; i < 4; i++)
@@ -168,7 +173,7 @@ struct _Matrix4x4Type
         return *this;
     }
 
-    _Matrix4x4Type operator* (_Matrix4x4Type other) const
+    _Matrix4x4Type operator* (const _Matrix4x4Type& other) const
     {
         _Matrix4x4Type newMat;
         for (size_t i = 0; i < 4; i++)
@@ -210,7 +215,7 @@ struct _Matrix4x4Type
         return newMat;
     }
 
-    _Matrix4x4Type& operator+= (_Matrix4x4Type other)
+    _Matrix4x4Type& operator+= (const _Matrix4x4Type& other)
     {
         _Matrix4x4Type copy = *this;
         for (size_t i = 0; i < 4; i++)
@@ -223,7 +228,7 @@ struct _Matrix4x4Type
         return *this;
     }
 
-    _Matrix4x4Type operator+ (_Matrix4x4Type other) const
+    _Matrix4x4Type operator+ (const _Matrix4x4Type& other) const
     {
         _Matrix4x4Type newMat;
         for (size_t i = 0; i < 4; i++)
@@ -236,7 +241,7 @@ struct _Matrix4x4Type
         return newMat;
     }
 
-    _Matrix4x4Type& operator-= (_Matrix4x4Type other)
+    _Matrix4x4Type& operator-= (const _Matrix4x4Type& other)
     {
         _Matrix4x4Type copy = *this;
         for (size_t i = 0; i < 4; i++)
@@ -249,7 +254,7 @@ struct _Matrix4x4Type
         return *this;
     }
 
-    _Matrix4x4Type operator- (_Matrix4x4Type other) const
+    _Matrix4x4Type operator- (const _Matrix4x4Type& other) const
     {
         _Matrix4x4Type newMat;
         for (size_t i = 0; i < 4; i++)
@@ -281,7 +286,7 @@ struct _Matrix4x4Type
         return newMat;
     }
 
-    bool operator== (_Matrix4x4Type other) const
+    bool operator== (const _Matrix4x4Type& other) const
     {
         for (size_t i = 0; i < 4; i++)
             for (size_t j = 0; j < 4; j++)
@@ -289,7 +294,7 @@ struct _Matrix4x4Type
         return true;
     }
 
-    bool operator!= (_Matrix4x4Type other) const
+    bool operator!= (const _Matrix4x4Type& other) const
     {
         for (size_t i = 0; i < 4; i++)
             for (size_t j = 0; j < 4; j++)

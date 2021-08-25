@@ -57,13 +57,35 @@ namespace jdw
 		int mWidth, mHeight, mBPP;
 
 	public:
-		Texture(const std::string& filepath, bool pixelart = false);
+		Texture(const char* filepath, bool pixelart = false);
 		~Texture();
+		Texture(const Texture&) = delete;
 
 		int getWidth() const { return this->mWidth; }
 		int getHeight() const { return this->mHeight; }
 		void bind(unsigned int slot = 0);
 		void unbind();
+	};
+
+	class Font
+	{
+	private:
+		static constexpr int mCapacity = 1<<20;
+		static constexpr int mBitmapSize = 512*512;
+		unsigned int mID;
+		unsigned char* mBuffer;
+		unsigned char* mBitmap;
+		void* mBakedChars;
+
+	public:
+		/* Filepath to a ttf file */
+		Font(const char* filepath, unsigned int fontSize = 32, bool pixelart = false);
+		~Font();
+
+		void bind(unsigned int slot = 0);
+		void unbind();
+
+		friend class Text;
 	};
 
 	// o--------o
@@ -81,6 +103,7 @@ namespace jdw
 		Sprite(Texture* texture, const Vec2f& bottomLeft, const Vec2f& bottomRight,
 								 const Vec2f& topRight,   const Vec2f& topLeft);
 		~Sprite();
+		Sprite(const Sprite&) = delete;
 
 		friend void draw(Sprite& sprite);
 	};
@@ -95,8 +118,24 @@ namespace jdw
 		// Draw a CONVEX polygon!
 		Drawable(Vec2f* points, int length, const Vec4f& color);
 		~Drawable();
+		Drawable(const Drawable&) = delete;
 
 		friend void draw(Drawable& drawable);
+	};
+
+	class Text : public _Entity2D
+	{
+	private:
+		Font* mFont;
+
+	public:
+		Vec4f color;
+
+		Text(Font* font, const std::string& str, const Vec4f& color);
+		~Text();
+		Text(const Text&) = delete;
+
+		friend void draw(Text& text);
 	};
 
 	// o--------o
@@ -165,6 +204,7 @@ namespace jdw
 		// TODO: add more constructors
 
 		~Model();
+		Model(const Model&) = delete;
 
 		Vec3f getDir() const override
 		{

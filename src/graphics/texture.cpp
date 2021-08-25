@@ -4,10 +4,10 @@
 
 namespace jdw
 {
-    Texture::Texture(const std::string& filepath, bool pixelart)
+    Texture::Texture(const char* filepath, bool pixelart)
     {
         stbi_set_flip_vertically_on_load(1);
-        mBuffer = stbi_load(filepath.c_str(), &mWidth, &mHeight, &mBPP, 4);
+        mBuffer = stbi_load(filepath, &mWidth, &mHeight, &mBPP, 4);
 
         glGenTextures(1, &mID);
         glBindTexture(GL_TEXTURE_2D, mID);

@@ -82,6 +82,34 @@ namespace jdw
 		glEnable(GL_DEPTH_TEST);
 	}
 
+	void draw(Text& text)
+	{
+		if (text.mNeedsRecalculation)
+		{
+			text.mNeedsRecalculation = 0;
+			text.recalculateMatrix();
+		}
+
+		GLObject* glData = (GLObject*) text.mGLData;
+		glData->bind();
+
+		Shader* shader = (Shader*) Application::mShaders[(int)SHADER::textShader];
+		shader->bind();
+
+		const int slot = 0;
+		text.mFont->bind(slot); // TODO: Implement texture slotting system
+
+		const Vec4f& col = text.color;
+		shader->setUniform("uProj", Application::mOrthoMatrix); // TODO_FAR: can be optimized further
+		shader->setUniform("uMV", text.mMatrix); // ...
+		shader->setUniform("uTexture", slot); // by moving it into setup / getters and setters
+		shader->setUniform("uColor", col.r, col.g, col.b, col.a);
+
+		glDisable(GL_DEPTH_TEST);
+		glDrawElements(GL_TRIANGLES, glData->getVertexCount(), GL_UNSIGNED_INT, nullptr);
+		glEnable(GL_DEPTH_TEST);
+	}
+
 	static int _getShaderIndex(bool hasTexture, bool hasNormals, LIGHTING lighting)
 	{
 		unsigned int texPart = hasTexture ? 0x100 : 0x000;

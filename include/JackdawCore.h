@@ -68,6 +68,7 @@ namespace jdw
 		friend void bindCamera(Camera* camera);
 		friend void draw(Sprite& sprite);
 		friend void draw(Drawable& drawable);
+		friend void draw(Text& text);
 		friend void render(Model& model);
 
 	};
@@ -93,6 +94,7 @@ namespace jdw
 	void bindCamera(Camera* camera);
 	void draw(Sprite& sprite);
 	void draw(Drawable& drawable);
+	void draw(Text& text);
 	void render(Model& model);
 
 }
