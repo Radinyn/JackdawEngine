@@ -1,5 +1,6 @@
 #include <string>
 #include <queue>
+#include <chrono>
 
 namespace jdw
 {
@@ -32,6 +33,7 @@ namespace jdw
 
     class AudioManager
     {
+        inline static std::chrono::steady_clock::time_point mTimeOld, mTimeNew;
         inline static bool active = 1;
         inline static std::queue<AudioCommand> mCommandQueue;
         static void process();

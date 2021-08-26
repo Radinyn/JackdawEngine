@@ -1,6 +1,5 @@
 #pragma once
 #include <string>
-#include <chrono>
 #include <thread>
 #include "JackdawGraphics.h"
 #include "JackdawAudio.h"

@@ -3,6 +3,8 @@
 #include <windows.h>
 #include <stdexcept>
 #include <iostream>
+#include <thread>
+#include <cmath>
 
 namespace jdw
 {
@@ -10,6 +12,8 @@ namespace jdw
     {
         while (active)
         {
+            mTimeOld = std::chrono::steady_clock::now();
+
             while (!mCommandQueue.empty())
             {
                 const AudioCommand& msg = mCommandQueue.front();
@@ -36,6 +40,13 @@ namespace jdw
                 }
                 mCommandQueue.pop();
             }
+
+            // Limit to 60 FPS to reduce CPU usage significantly
+            mTimeNew = std::chrono::steady_clock::now();
+            std::chrono::duration<double> duration = mTimeNew - mTimeOld;
+            double diff = (0.016666666666666666 - duration.count())*1000;
+            if (diff > 0)
+                std::this_thread::sleep_for(std::chrono::milliseconds((int)floor(diff)));
         }
     }
 
