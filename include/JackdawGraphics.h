@@ -108,19 +108,19 @@ namespace jdw
 		friend void draw(Sprite& sprite);
 	};
 
-	class Drawable : public _Entity2D
+	class Polygon : public _Entity2D
 	{
 	public:
 		Vec4f color;
 
 		// Draw a CONVEX polygon!
-		Drawable(const std::vector<Vec2f>& points, const Vec4f& color);
+		Polygon(const std::vector<Vec2f>& points, const Vec4f& color);
 		// Draw a CONVEX polygon!
-		Drawable(Vec2f* points, int length, const Vec4f& color);
-		~Drawable();
-		Drawable(const Drawable&) = delete;
+		Polygon(Vec2f* points, int length, const Vec4f& color);
+		~Polygon();
+		Polygon(const Polygon&) = delete;
 
-		friend void draw(Drawable& drawable);
+		friend void draw(Polygon& Polygon);
 	};
 
 	class Text : public _Entity2D

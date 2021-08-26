@@ -67,7 +67,7 @@ namespace jdw
 		friend Vec4f getFillColor();
 		friend void bindCamera(Camera* camera);
 		friend void draw(Sprite& sprite);
-		friend void draw(Drawable& drawable);
+		friend void draw(Polygon& Polygon);
 		friend void draw(Text& text);
 		friend void render(Model& model);
 
@@ -93,7 +93,7 @@ namespace jdw
 	Vec4f getFillColor();
 	void bindCamera(Camera* camera);
 	void draw(Sprite& sprite);
-	void draw(Drawable& drawable);
+	void draw(Polygon& Polygon);
 	void draw(Text& text);
 	void render(Model& model);
 

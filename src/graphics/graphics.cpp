@@ -32,23 +32,23 @@ namespace jdw
 		Application::mCamera = camera;
 	}
 
-	void draw(Drawable& drawable)
+	void draw(Polygon& Polygon)
 	{
-		if (drawable.mNeedsRecalculation)
+		if (Polygon.mNeedsRecalculation)
 		{
-			drawable.mNeedsRecalculation = 0;
-			drawable.recalculateMatrix();
+			Polygon.mNeedsRecalculation = 0;
+			Polygon.recalculateMatrix();
 		}
 
-		GLObject* glData = (GLObject*) drawable.mGLData;
+		GLObject* glData = (GLObject*) Polygon.mGLData;
 		glData->bind();
 
 		Shader* shader = (Shader*) Application::mShaders[(int)SHADER::t0n0lN];
 		shader->bind();
 
-		const Vec4f& col = drawable.color;
+		const Vec4f& col = Polygon.color;
 		shader->setUniform("uProj", Application::mOrthoMatrix); // TODO_FAR: can be optimized further
-		shader->setUniform("uMV", drawable.mMatrix); // ...
+		shader->setUniform("uMV", Polygon.mMatrix); // ...
 		shader->setUniform("uColor", col.r, col.g, col.b, col.a); // by moving it into setup / getters and setters
 
 		glDisable(GL_DEPTH_TEST);

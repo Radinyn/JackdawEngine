@@ -1,4 +1,3 @@
-
 #include "include/Jackdaw.h"
 
 int main()
@@ -6,7 +5,7 @@ int main()
     const int WIDTH = 400, HEIGHT = 400;
     jdw::Application::init(WIDTH, HEIGHT, L"Hello world!", false);
 
-    jdw::Drawable polygon = {
+    jdw::Polygon polygon = {
         {
             {3, 0}, {9, 0}, {12, 3}, {12, 9},
             {9, 12}, {3, 12}, {0, 9}, {0, 3}
