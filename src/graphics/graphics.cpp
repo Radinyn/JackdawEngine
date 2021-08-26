@@ -110,6 +110,24 @@ namespace jdw
 		glEnable(GL_DEPTH_TEST);
 	}
 
+	void drawLine(const Vec2f& a, const Vec2f& b, const Vec4f& color, float width)
+	{
+		// This is actually MUCH faster than sending data to the GPU each frame
+		// Create a single square 1x1 and modify it to look like a line
+
+		static Polygon lineBase = {
+			{ {0, 0}, {1, 0}, {1, 1}, {0, 1} },
+			{0, 0, 0, 1}
+		};
+
+		float length = dist(a, b);
+		lineBase.setScale({length, width});
+		lineBase.setPosition(a);
+		lineBase.setRotation((b-a).getAngle());
+		lineBase.color = color;
+		draw(lineBase);
+	}
+
 	static int _getShaderIndex(bool hasTexture, bool hasNormals, LIGHTING lighting)
 	{
 		unsigned int texPart = hasTexture ? 0x100 : 0x000;

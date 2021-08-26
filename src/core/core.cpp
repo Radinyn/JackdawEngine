@@ -27,7 +27,7 @@ namespace jdw
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glEnable(GL_CULL_FACE);
-
+		
 		// Load in shaders
 		mShaders.resize(_shaders.size());
 		for (unsigned int i = 0; i < mShaders.size(); i++)

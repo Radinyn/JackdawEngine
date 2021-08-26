@@ -24,6 +24,21 @@ fragColor = vec4(uColor.rgb, uColor.a * texture(uTexture, vTexCoord).r);
 
 R"glsl(#version 400 core
 layout(location = 0) in vec3 position;
+uniform mat4 uProj;
+void main() {
+gl_Position = uProj * vec4(position, 1);
+}
+$
+#version 400 core
+out vec4 fragColor;
+uniform vec4 uColor;
+void main() {
+fragColor = uColor;
+}
+)glsl",
+
+R"glsl(#version 400 core
+layout(location = 0) in vec3 position;
 uniform mat4 uMV;
 uniform mat4 uProj;
 void main() {

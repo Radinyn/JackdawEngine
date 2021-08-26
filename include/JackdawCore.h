@@ -69,6 +69,7 @@ namespace jdw
 		friend void draw(Sprite& sprite);
 		friend void draw(Polygon& Polygon);
 		friend void draw(Text& text);
+		friend void drawLine(const Vec2f& a, const Vec2f& b, const Vec4f& color, float width);
 		friend void render(Model& model);
 
 	};
@@ -95,6 +96,7 @@ namespace jdw
 	void draw(Sprite& sprite);
 	void draw(Polygon& Polygon);
 	void draw(Text& text);
+	void drawLine(const Vec2f& a, const Vec2f& b, const Vec4f& color, float width = 1.0f);
 	void render(Model& model);
 
 }
