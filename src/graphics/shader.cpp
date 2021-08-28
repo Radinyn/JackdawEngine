@@ -28,12 +28,17 @@ static GLuint compileShader(const char* src, GLuint type)
     return id;
 }
 
-static GLuint createShader(const std::string& vertexShader, const std::string& fragmentShader)
+static GLuint createShader(const std::string& vertexShader, const std::string& fragmentShader, const std::string& geometryShader)
 {
     GLuint program = glCreateProgram();
     GLuint vs = compileShader(vertexShader.c_str(), GL_VERTEX_SHADER);
     GLuint fs = compileShader(fragmentShader.c_str(), GL_FRAGMENT_SHADER);
+    GLuint gs;
     glAttachShader(program, vs); glAttachShader(program, fs);
+
+    if (geometryShader.length())
+        gs = compileShader(geometryShader.c_str(), GL_GEOMETRY_SHADER);
+
     glLinkProgram(program);
     glValidateProgram(program);
 
@@ -53,21 +58,37 @@ static GLuint createShader(const std::string& vertexShader, const std::string& f
 #endif
 
     glDeleteShader(vs); glDeleteShader(fs);
+    if (geometryShader.length())
+        glDeleteShader(gs);
     return program;
 }
 
-
-Shader::Shader(const std::string& shader)
+Shader::Shader(const std::string& shader, bool hasGeometryShader)
 {
     // Split shader
     std::istringstream ss(shader);
     std::string vertexShader, fragmentShader;
+    std::string geometryShader = "";
 
     // Dolar sign used as a delimiter
     std::getline(ss, vertexShader, '$');
+
+    if (hasGeometryShader)
+        std::getline(ss, geometryShader);
+
     std::getline(ss, fragmentShader, '$');
 
-    mID = createShader(vertexShader, fragmentShader);
+    mID = createShader(vertexShader, fragmentShader, geometryShader);
+}
+
+Shader::Shader(const std::string& vertexShader, const std::string& fragmentShader)
+{
+    mID = createShader(vertexShader, fragmentShader, "");
+}
+
+Shader::Shader(const std::string& vertexShader, const std::string& geometryShader, const std::string& fragmentShader)
+{
+    mID = createShader(vertexShader, fragmentShader, geometryShader);
 }
 
 Shader::~Shader()
@@ -85,18 +106,73 @@ void Shader::unbind() const
     glUseProgram(0);
 }
 
-void Shader::setUniform(const std::string& name, float v0, float v1, float v2, float v3)
+// FLOAT
+void Shader::setUniform(const std::string& name, float v)
 {
     int location = this->getUniformLocation(name);
-    glUniform4f(location, v0, v1, v2, v3);
+    glUniform1f(location, v);
+}
+void Shader::setUniform(const std::string& name, const jdw::Vec2f& vec)
+{
+    int location = this->getUniformLocation(name);
+    glUniform2f(location, vec.x, vec.y);
+}
+void Shader::setUniform(const std::string& name, const jdw::Vec3f& vec)
+{
+    int location = this->getUniformLocation(name);
+    glUniform3f(location, vec.x, vec.y, vec.z);
+}
+void Shader::setUniform(const std::string& name, const jdw::Vec4f& vec)
+{
+    int location = this->getUniformLocation(name);
+    glUniform4f(location, vec.x, vec.y, vec.z, vec.w);
 }
 
+// INT
 void Shader::setUniform(const std::string& name, int v)
 {
     int location = this->getUniformLocation(name);
     glUniform1i(location, v);
 }
+void Shader::setUniform(const std::string& name, const jdw::Vec2i& vec)
+{
+    int location = this->getUniformLocation(name);
+    glUniform2i(location, vec.x, vec.y);
+}
+void Shader::setUniform(const std::string& name, const jdw::Vec3i& vec)
+{
+    int location = this->getUniformLocation(name);
+    glUniform3i(location, vec.x, vec.y, vec.z);
+}
+void Shader::setUniform(const std::string& name, const jdw::Vec4i& vec)
+{
+    int location = this->getUniformLocation(name);
+    glUniform4i(location, vec.x, vec.y, vec.z, vec.w);
+}
 
+// UNSIGNED INT
+void Shader::setUniform(const std::string& name, unsigned int v)
+{
+    int location = this->getUniformLocation(name);
+    glUniform1ui(location, v);
+}
+void Shader::setUniform(const std::string& name, const jdw::Vec2ui& vec)
+{
+    int location = this->getUniformLocation(name);
+    glUniform2ui(location, vec.x, vec.y);
+}
+void Shader::setUniform(const std::string& name, const jdw::Vec3ui& vec)
+{
+    int location = this->getUniformLocation(name);
+    glUniform3ui(location, vec.x, vec.y, vec.z);
+}
+void Shader::setUniform(const std::string& name, const jdw::Vec4ui& vec)
+{
+    int location = this->getUniformLocation(name);
+    glUniform4ui(location, vec.x, vec.y, vec.z, vec.w);
+}
+
+// 4x4 MATRIX
 void Shader::setUniform(const std::string& name, const jdw::Mat4f& mat)
 {
     int location = this->getUniformLocation(name);

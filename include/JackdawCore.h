@@ -65,11 +65,14 @@ namespace jdw
 		friend void setFillColor(Vec4f color);
 		friend Vec4f getFillColor();
 		friend void bindCamera(Camera* camera);
-		friend void draw(Sprite& sprite);
-		friend void draw(Polygon& Polygon);
-		friend void draw(Text& text);
+		friend void draw(Sprite& sprite, CustomShader* customShader);
+		friend void draw(Polygon& polygon, CustomShader* customShader);
+		friend void draw(Text& text, CustomShader* customShader);
 		friend void drawLine(const Vec2f& a, const Vec2f& b, const Vec4f& color, float width);
-		friend void render(Model& model);
+		friend void render(Model& model, CustomShader* customShader);
+
+		/* Defined in customDrawing */
+		friend void draw(Sprite& sprite, CustomShader* customShader);
 
 	};
 
@@ -92,10 +95,10 @@ namespace jdw
 	void setFillColor(Vec4f color);
 	Vec4f getFillColor();
 	void bindCamera(Camera* camera);
-	void draw(Sprite& sprite);
-	void draw(Polygon& Polygon);
-	void draw(Text& text);
+	void draw(Sprite& sprite, CustomShader* customShader = nullptr);
+	void draw(Polygon& Polygon, CustomShader* customShader = nullptr);
+	void draw(Text& text, CustomShader* customShader = nullptr);
 	void drawLine(const Vec2f& a, const Vec2f& b, const Vec4f& color, float width = 1.0f);
-	void render(Model& model);
+	void render(Model& model, CustomShader* customShader = nullptr);
 
 }

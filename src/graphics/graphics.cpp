@@ -32,31 +32,68 @@ namespace jdw
 		Application::mCamera = camera;
 	}
 
-	void draw(Polygon& Polygon)
+	// Typedef for macro
+	typedef unsigned int uint;
+
+	#define IF___CHECK_AND_SET_UNIVAL(TYPE) if (const TYPE* p = std::get_if<TYPE>(&value)) shader->setUniform(name, *p)
+	#define ELIF_CHECK_AND_SET_UNIVAL(TYPE) else if (const TYPE* p = std::get_if<TYPE>(&value)) shader->setUniform(name, *p)
+
+	void _setUniforms(Shader* shader, UniformMap& uniMap)
 	{
-		if (Polygon.mNeedsRecalculation)
+			for (const auto& [name, value] : uniMap)
+			{
+				IF___CHECK_AND_SET_UNIVAL(int);
+				ELIF_CHECK_AND_SET_UNIVAL(Vec2i);
+				ELIF_CHECK_AND_SET_UNIVAL(Vec3i);
+				ELIF_CHECK_AND_SET_UNIVAL(Vec4i);
+				ELIF_CHECK_AND_SET_UNIVAL(uint);
+				ELIF_CHECK_AND_SET_UNIVAL(Vec2ui);
+				ELIF_CHECK_AND_SET_UNIVAL(Vec3ui);
+				ELIF_CHECK_AND_SET_UNIVAL(Vec4ui);
+				ELIF_CHECK_AND_SET_UNIVAL(float);
+				ELIF_CHECK_AND_SET_UNIVAL(Vec2f);
+				ELIF_CHECK_AND_SET_UNIVAL(Vec3f);
+				ELIF_CHECK_AND_SET_UNIVAL(Vec4f);
+				ELIF_CHECK_AND_SET_UNIVAL(Mat4f);
+			}
+	}
+
+	void draw(Polygon& polygon, CustomShader* customShader)
+	{
+		if (polygon.mNeedsRecalculation)
 		{
-			Polygon.mNeedsRecalculation = 0;
-			Polygon.recalculateMatrix();
+			polygon.mNeedsRecalculation = 0;
+			polygon.recalculateMatrix();
 		}
 
-		GLObject* glData = (GLObject*) Polygon.mGLData;
+		GLObject* glData = (GLObject*) polygon.mGLData;
 		glData->bind();
 
-		Shader* shader = (Shader*) Application::mShaders[(int)SHADER::t0n0lN];
-		shader->bind();
+		Shader* shader;
+		if (customShader)
+		{
+			shader = (Shader*) customShader->innerShader;
+			shader->bind();
+			if (customShader->uniMap)
+				_setUniforms(shader, *(customShader->uniMap));
+		}
+		else
+		{
+			shader = (Shader*) Application::mShaders[(int)SHADER::t0n0lN];
+			shader->bind();
+		}
 
-		const Vec4f& col = Polygon.color;
+
 		shader->setUniform("uProj", Application::mOrthoMatrix); // TODO_FAR: can be optimized further
-		shader->setUniform("uMV", Polygon.mMatrix); // ...
-		shader->setUniform("uColor", col.r, col.g, col.b, col.a); // by moving it into setup / getters and setters
-
+		shader->setUniform("uMV", polygon.mMatrix); // ...
+		shader->setUniform("uColor", polygon.color); // by moving it into setup / getters and setters
+		
 		glDisable(GL_DEPTH_TEST);
 		glDrawElements(GL_TRIANGLES, glData->getVertexCount(), GL_UNSIGNED_INT, nullptr);
 		glEnable(GL_DEPTH_TEST);
 	}
 
-	void draw(Sprite& sprite)
+	void draw(Sprite& sprite, CustomShader* customShader)
 	{
 		if (sprite.mNeedsRecalculation)
 		{
@@ -67,8 +104,19 @@ namespace jdw
 		GLObject* glData = (GLObject*) sprite.mGLData;
 		glData->bind();
 
-		Shader* shader = (Shader*) Application::mShaders[(int)SHADER::t1n0lN];
-		shader->bind();
+		Shader* shader;
+		if (customShader)
+		{
+			shader = (Shader*) customShader->innerShader;
+			shader->bind();
+			if (customShader->uniMap)
+				_setUniforms(shader, *(customShader->uniMap));
+		}
+		else
+		{
+			shader = (Shader*) Application::mShaders[(int)SHADER::t1n0lN];
+			shader->bind();
+		}
 
 		const int slot = 0;
 		sprite.mTexture->bind(slot); // TODO: Implement texture slotting system
@@ -82,7 +130,7 @@ namespace jdw
 		glEnable(GL_DEPTH_TEST);
 	}
 
-	void draw(Text& text)
+	void draw(Text& text, CustomShader* customShader)
 	{
 		if (text.mNeedsRecalculation)
 		{
@@ -93,17 +141,27 @@ namespace jdw
 		GLObject* glData = (GLObject*) text.mGLData;
 		glData->bind();
 
-		Shader* shader = (Shader*) Application::mShaders[(int)SHADER::textShader];
-		shader->bind();
+		Shader* shader;
+		if (customShader)
+		{
+			shader = (Shader*) customShader->innerShader;
+			shader->bind();
+			if (customShader->uniMap)
+				_setUniforms(shader, *(customShader->uniMap));
+		}
+		else
+		{
+			shader = (Shader*) Application::mShaders[(int)SHADER::textShader];
+			shader->bind();
+		}
 
 		const int slot = 0;
 		text.mFont->bind(slot); // TODO: Implement texture slotting system
 
-		const Vec4f& col = text.color;
 		shader->setUniform("uProj", Application::mOrthoMatrix); // TODO_FAR: can be optimized further
 		shader->setUniform("uMV", text.mMatrix); // ...
 		shader->setUniform("uTexture", slot); // by moving it into setup / getters and setters
-		shader->setUniform("uColor", col.r, col.g, col.b, col.a);
+		shader->setUniform("uColor", text.color);
 
 		glDisable(GL_DEPTH_TEST);
 		glDrawElements(GL_TRIANGLES, glData->getVertexCount(), GL_UNSIGNED_INT, nullptr);
@@ -151,7 +209,7 @@ namespace jdw
 
 	}
 
-	void render(Model& model)
+	void render(Model& model, CustomShader* customShader)
 	{
 		if (!Application::mCamera)
 			throw std::runtime_error("[JDW] [Error] No camera bound");
@@ -177,9 +235,20 @@ namespace jdw
 		GLObject* glData = (GLObject*) model.mGLData;
 		glData->bind();
 
-		int shadeIndex = _getShaderIndex(model.mHasTexture, model.mHasNormals, model.lighting);
-		Shader* shader = (Shader*) Application::mShaders[shadeIndex];
-		shader->bind();
+		Shader* shader;
+		if (customShader)
+		{
+			shader = (Shader*) customShader->innerShader;
+			shader->bind();
+			if (customShader->uniMap)
+				_setUniforms(shader, *(customShader->uniMap));
+		}
+		else
+		{
+			int shaderIndex = _getShaderIndex(model.mHasTexture, model.mHasNormals, model.lighting);
+			shader = (Shader*) Application::mShaders[shaderIndex];
+			shader->bind();
+		}
 
 		const int slot = 0;
 		if (model.mHasTexture)
@@ -192,10 +261,7 @@ namespace jdw
 		if (model.mHasTexture)
 			shader->setUniform("uTexture", slot);
 		else
-		{
-			const Vec4f& col = model.color;
-			shader->setUniform("uColor", col.r, col.g, col.b, col.a);
-		}
+			shader->setUniform("uColor", model.color);
 
 		glDrawElements(GL_TRIANGLES, glData->getVertexCount(), GL_UNSIGNED_INT, nullptr);
 	}

@@ -1,5 +1,6 @@
 #pragma once
 #include "JackdawMath.h"
+#include "JackdawCustomShader.h"
 #include <vector>
 #include <string>
 
@@ -105,7 +106,7 @@ namespace jdw
 		~Sprite();
 		Sprite(const Sprite&) = delete;
 
-		friend void draw(Sprite& sprite);
+		friend void draw(Sprite& sprite, CustomShader* customShader);
 	};
 
 	class Polygon : public _Entity2D
@@ -120,7 +121,7 @@ namespace jdw
 		~Polygon();
 		Polygon(const Polygon&) = delete;
 
-		friend void draw(Polygon& Polygon);
+		friend void draw(Polygon& Polygon, CustomShader* customShader);
 	};
 
 	class Text : public _Entity2D
@@ -135,7 +136,7 @@ namespace jdw
 		~Text();
 		Text(const Text&) = delete;
 
-		friend void draw(Text& text);
+		friend void draw(Text& text, CustomShader* customShader);
 	};
 
 	// o--------o
@@ -213,7 +214,7 @@ namespace jdw
 			return norm;
 		}
 
-		friend void render(Model& model);
+		friend void render(Model& model, CustomShader* customShader);
 		friend class Camera;
 	};
 
@@ -256,6 +257,6 @@ namespace jdw
 			return norm;
 		}
 
-		friend void render(Model& model);
+		friend void render(Model& model, CustomShader* customShader);
 	};
 }
