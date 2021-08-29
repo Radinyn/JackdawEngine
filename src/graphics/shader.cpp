@@ -3,6 +3,9 @@
 #include <sstream>
 #include "../core/glfunctions.h"
 
+// TODO: REPLACE WITH LOG SYSTEM
+#define DEBUGGING_GL 1
+
 static GLuint compileShader(const char* src, GLuint type)
 {
     GLuint id = glCreateShader(type);
@@ -37,7 +40,10 @@ static GLuint createShader(const std::string& vertexShader, const std::string& f
     glAttachShader(program, vs); glAttachShader(program, fs);
 
     if (geometryShader.length())
+    {
         gs = compileShader(geometryShader.c_str(), GL_GEOMETRY_SHADER);
+        glAttachShader(program, gs);
+    }
 
     glLinkProgram(program);
     glValidateProgram(program);

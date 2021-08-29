@@ -36,13 +36,18 @@ namespace jdw
 	typedef unsigned int uint;
 
 	#define IF___CHECK_AND_SET_UNIVAL(TYPE) if (const TYPE* p = std::get_if<TYPE>(&value)) shader->setUniform(name, *p)
-	#define ELIF_CHECK_AND_SET_UNIVAL(TYPE) else if (const TYPE* p = std::get_if<TYPE>(&value)) shader->setUniform(name, *p)
+	#define ELIF_CHECK_AND_SET_UNIVAL(TYPE) else IF___CHECK_AND_SET_UNIVAL(TYPE)
 
 	void _setUniforms(Shader* shader, UniformMap& uniMap)
 	{
 			for (const auto& [name, value] : uniMap)
 			{
-				IF___CHECK_AND_SET_UNIVAL(int);
+				IF___CHECK_AND_SET_UNIVAL(float);
+				ELIF_CHECK_AND_SET_UNIVAL(Vec2f);
+				ELIF_CHECK_AND_SET_UNIVAL(Vec3f);
+				ELIF_CHECK_AND_SET_UNIVAL(Vec4f);
+				ELIF_CHECK_AND_SET_UNIVAL(Mat4f);
+				ELIF_CHECK_AND_SET_UNIVAL(int);
 				ELIF_CHECK_AND_SET_UNIVAL(Vec2i);
 				ELIF_CHECK_AND_SET_UNIVAL(Vec3i);
 				ELIF_CHECK_AND_SET_UNIVAL(Vec4i);
@@ -50,11 +55,6 @@ namespace jdw
 				ELIF_CHECK_AND_SET_UNIVAL(Vec2ui);
 				ELIF_CHECK_AND_SET_UNIVAL(Vec3ui);
 				ELIF_CHECK_AND_SET_UNIVAL(Vec4ui);
-				ELIF_CHECK_AND_SET_UNIVAL(float);
-				ELIF_CHECK_AND_SET_UNIVAL(Vec2f);
-				ELIF_CHECK_AND_SET_UNIVAL(Vec3f);
-				ELIF_CHECK_AND_SET_UNIVAL(Vec4f);
-				ELIF_CHECK_AND_SET_UNIVAL(Mat4f);
 			}
 	}
 
