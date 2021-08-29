@@ -19,6 +19,11 @@ namespace jdw
 		F1 = 0x70, F2, F3, F4, F5, F6, F7, F8, F9, F11, F12,
 		LEFT = 0x25, UP, RIGHT, DOWN,
 	};
+
+	enum class IMG_FORMAT
+    {
+        PNG, JPG
+    };
 	
 
 	// Singleton class, menages everything in the global scope
@@ -71,8 +76,8 @@ namespace jdw
 		friend void drawLine(const Vec2f& a, const Vec2f& b, const Vec4f& color, float width);
 		friend void render(Model& model, CustomShader* customShader);
 
-		/* Defined in customDrawing */
-		friend void draw(Sprite& sprite, CustomShader* customShader);
+		/* Defined in screenshot */                                /* affects only JPG */
+		friend void screenshot(const char* filename, IMG_FORMAT format, int quality);
 
 	};
 
@@ -100,5 +105,6 @@ namespace jdw
 	void draw(Text& text, CustomShader* customShader = nullptr);
 	void drawLine(const Vec2f& a, const Vec2f& b, const Vec4f& color, float width = 1.0f);
 	void render(Model& model, CustomShader* customShader = nullptr);
+	void screenshot(const char* filename, IMG_FORMAT format = IMG_FORMAT::PNG, int quality = 90);
 
 }
