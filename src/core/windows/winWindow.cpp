@@ -13,8 +13,8 @@
 #define SET_KEY(x) if (!keyHeld[x]) keyPressed[x] = 1; keyHeld[x] = 1; break;
 #define UNSET_KEY(x) if (keyHeld[x]) keyReleased[x] = 1; keyHeld[x] = 0; break;
 
-winWindow::winWindow(int width, int height, const wchar_t* title, bool fullscreen) :
-	width(width), height(height), posX(CW_USEDEFAULT), posY(0), fullscreen(fullscreen),
+winWindow::winWindow(int width, int height, const wchar_t* title, bool fullscreen, bool display) :
+	width(width), height(height), posX(CW_USEDEFAULT), posY(0), fullscreen(fullscreen), display(display),
 	style(WS_CAPTION | WS_SYSMENU | WS_CLIPSIBLINGS | WS_CLIPCHILDREN), title(title)
 {
 	wheelDelta = 0.0;
@@ -122,12 +122,15 @@ void winWindow::create()
 	int tempWidth = this->width;
 	int tempHeight = this->height;
 
-	if (!this->fullscreen)
+	if (this->display)
 	{
-		RECT wndRect = { 0, 0, this->width, this->height };
-		AdjustWindowRect(&wndRect, this->style, FALSE);
-		tempWidth = wndRect.right - wndRect.left;
-		tempHeight = wndRect.bottom - wndRect.top;
+		if (!this->fullscreen)
+		{
+			RECT wndRect = { 0, 0, this->width, this->height };
+			AdjustWindowRect(&wndRect, this->style, FALSE);
+			tempWidth = wndRect.right - wndRect.left;
+			tempHeight = wndRect.bottom - wndRect.top;
+		}
 	}
 
 	/* Create the actual window */
@@ -194,6 +197,20 @@ void winWindow::create()
 	// GetStartupInfo(&startupInfo);
 
 	ShowWindow(this->window, SW_SHOWDEFAULT);
+
+	
+	if (!this->display)
+	{
+		HWND handle = GetActiveWindow();
+		SetWindowPos(
+		handle,
+		HWND_TOP,
+		this->posX, this->posY,
+		tempWidth, tempHeight,
+		SWP_NOSENDCHANGING
+		);
+	}
+	
 }
 
 void winWindow::terminate()
@@ -224,6 +241,19 @@ bool winWindow::process()
 
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
+	}
+
+	if (!this->display)
+	{
+		HWND handle = GetActiveWindow();
+		SetWindowPos(
+		handle,
+		HWND_TOP,
+		this->posX, this->posY,
+		this->width, this->height,
+		SWP_NOSENDCHANGING | SWP_NOMOVE
+		);
+		glViewport(0, 0, width, height);
 	}
 
 	SwapBuffers(this->deviceContext);

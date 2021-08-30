@@ -41,7 +41,7 @@ namespace jdw
 		inline static std::chrono::steady_clock::time_point mTimeOld, mTimeNew;
 		inline static std::thread* mAudioThread;
 	public:
-		static void init(unsigned int width, unsigned int height, const wchar_t* windowName, bool fullscreen);
+		static void init(unsigned int width, unsigned int height, const wchar_t* windowName, bool fullscreen = false, bool display = true);
 		static void terminate();
 		static bool run();
 		static void close();
@@ -105,6 +105,6 @@ namespace jdw
 	void draw(Text& text, CustomShader* customShader = nullptr);
 	void drawLine(const Vec2f& a, const Vec2f& b, const Vec4f& color, float width = 1.0f);
 	void render(Model& model, CustomShader* customShader = nullptr);
-	void screenshot(const char* filename, IMG_FORMAT format = IMG_FORMAT::PNG, int quality = 90);
+	void screenshot(const char* filename, IMG_FORMAT format = IMG_FORMAT::JPG, int quality = 100);
 
 }

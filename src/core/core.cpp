@@ -7,7 +7,7 @@
 namespace jdw
 {
 
-	void Application::init(unsigned int width, unsigned int height, const wchar_t* windowName, bool fullscreen)
+	void Application::init(unsigned int width, unsigned int height, const wchar_t* windowName, bool fullscreen, bool display)
 	{
 		mHeight = height;
 		mWidth = width;
@@ -18,15 +18,17 @@ namespace jdw
 		mTimeOld = std::chrono::steady_clock::now();
 		mTimeNew = std::chrono::steady_clock::now();
 
-		mWindow = new Window(width, height, windowName, fullscreen);
+		mWindow = new Window(width, height, windowName, fullscreen, display);
 		((Window*)mWindow)->create();
 
 		// OpenGL setup
+		if (!display) glViewport(0, 0, width, height);
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LEQUAL);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glEnable(GL_CULL_FACE);
+		glEnable(GL_MULTISAMPLE);
 		
 		// Load in shaders
 		mShaders.resize(_shaders.size());

@@ -19,11 +19,12 @@ public:
 	inline static bool keyReleased[256];
 	bool active = true;
 	bool fullscreen = false;
+	bool display = true;
 	inline static bool focused = false;
 	inline static double wheelDelta;
 
 	static LRESULT CALLBACK wndProc(HWND hWND, UINT message, WPARAM wParam, LPARAM lParam);
-	winWindow(int width, int height, const wchar_t* title = L"Hello world!", bool fullscreen = false);
+	winWindow(int width, int height, const wchar_t* title = L"Hello world!", bool fullscreen = false, bool autoAdjust = true);
 	void create();
 	void terminate();
 	bool process();
