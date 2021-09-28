@@ -5,3 +5,5 @@ Currently only Windows is supported
 
 Dependencies:
 opengl32.lib, winmm.lib
+
+[Documentation](https://radinyn.github.io/#/docs/engine)
